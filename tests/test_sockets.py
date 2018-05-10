@@ -6,7 +6,7 @@ import mock
 
 import pytest
 from circus.sockets import CircusSocket, CircusSockets
-from circus.tests.support import IS_WINDOWS
+from circus.util import IS_WINDOWS
 
 try:
     import IN
@@ -181,29 +181,6 @@ def test_set_inheritable(file_path):
         assert sock.get_inheritable()
     finally:
         sock.close()
-
-
-@pytest.fixture
-def file_path(tmpdir):
-    filename = tmpdir.ensure('socket')
-    filename.remove()
-    return filename.strpath
-
-
-@pytest.fixture
-def tcp_socket():
-    sock = CircusSocket('somename', 'localhost', 0)
-    yield sock
-    sock.close()
-
-
-@pytest.fixture
-def socket_manager():
-    mgr = CircusSockets()
-    for i in range(5):
-        mgr.add(str(i), 'localhost', 0)
-    yield mgr
-    mgr.close_all()
 
 
 def test_socket(tcp_socket):

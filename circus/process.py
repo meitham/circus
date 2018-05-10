@@ -225,7 +225,13 @@ class Process(object):
                     # we're probably dealing with a file-like
                     continue
                 try:
-                    stream.flush()
+                    try:
+                        stream.flush()
+                    except AttributeError:
+                        if type(stream).__name__ == 'DontReadFromInput':
+                            continue
+                        else:
+                            raise
                     os.dup2(devnull, stream.fileno())
                 except IOError:
                     # some streams, like stdin - might be already closed.
